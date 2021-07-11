@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Message
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 
@@ -19,10 +20,7 @@ messages = [
 
 def base(request):
     context = {
-        # 'sender' : sender,
-        # 'reciever' : reciever,
-        'messages' : messages,
-        # 'created_at' : created_at,
+        'messages' : Message.objects.all(),
     }
     return render(request,'base.html', context)
 
