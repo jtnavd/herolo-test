@@ -1,22 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import Message
-from django.http import HttpResponse
-from django.contrib.auth.forms import UserCreationForm
-
-messages = [
-    {
-        'sender' : 'John Doe',
-        'title' : 'Inquiry 1',
-        'content' : 'Lorem Ipsum',
-        'sender' : '1 jan 2002',
-    },
-    {
-        'sender' : 'Mary Jane',
-        'title' : 'Inquiry 2',
-        'content' : 'Lorem Ipsum',
-        'sender' : '1 jan 2004',
-    }
-]
+from .forms import UserRegisterForm
 
 def base(request):
     context = {
@@ -25,5 +10,17 @@ def base(request):
     return render(request,'base.html', context)
 
 def register(request):
-    form = UserCreationForm()
-    return render(request, 'partials/_register.html')
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f"{username} account's created!")
+            return redirect('base-page')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'partials/_register.html', {'form':form})
+
+def profile(request):
+    return render(request, 'partials/_profile.html')
+
