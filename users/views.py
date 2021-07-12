@@ -1,15 +1,36 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, DetailView, CreateView
 from .models import Message
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
+# Main page display
 def base(request):
     context = {
         'messages' : Message.objects.all(),
     }
     return render(request,'base.html', context)
 
+# Messaging
+class PostListView(ListView):
+    model = Message
+    template_name = 'home.html'
+    context_object_name = 'messages'
+    ordering = ['-date_sent']
+
+class PostDetailView(DetailView):
+    model = Message
+
+class PostCreateView(CreateView):
+    model = Message
+    fields = ['title','content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# Profiles management
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
