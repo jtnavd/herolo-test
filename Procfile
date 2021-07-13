@@ -1,1 +1,1 @@
-web gunicorn name.wsgi:application --log-file -
+web gunicorn herolojonathanavidartest.wsgi:application --log-file -
