@@ -8,7 +8,7 @@
                 <a class="mr-2" href="#">{{ message.author }}</a>
                 <small class="text-muted">{{ message.date_sent|date:"F d, Y" }}</small>
             </div>
-            <h2><a class="article-title" href="{% url 'message-detail' message.id %}">{{ message.title }}</a></h2>
+            <h2><a class="article-title" href="{% url 'message-detail' %}">{{ message.title }}</a></h2>
             <p class="article-content">{{ message.content }}</p>
         </div>
     </article>

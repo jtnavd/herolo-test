@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.mixins import  LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Message
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
@@ -22,7 +23,8 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Message
 
-class PostCreateView(CreateView):
+# Create new message
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Message
     fields = ['title','content']
 
@@ -30,7 +32,34 @@ class PostCreateView(CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+# Update - Modify message
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Message
+    fields = ['title','content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+# Delete message
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Message
+    success_url = '/'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
 # Profiles management
+# Create account
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -43,6 +72,7 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'partials/_register.html', {'form':form})
 
+#  Login to account
 @login_required
 def profile(request):
     if request.method == 'POST':
