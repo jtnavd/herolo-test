@@ -3,29 +3,29 @@ from django.contrib import messages
 from django.contrib.auth.mixins import  LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Message
+from .models import Mail
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
 # Main page display
 def base(request):
     context = {
-        'messages' : Message.objects.all(),
+        'messages' : Mail.objects.all(),
     }
     return render(request,'base.html', context)
 
 # Messaging
 class PostListView(ListView):
-    model = Message
+    model = Mail
     template_name = 'home.html'
     context_object_name = 'messages'
     ordering = ['-date_sent']
 
 class PostDetailView(DetailView):
-    model = Message
+    model = Mail
 
 # Create new message
 class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Message
+    model = Mail
     fields = ['title','content']
 
     def form_valid(self, form):
@@ -34,7 +34,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 # Update - Modify message
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Message
+    model = Mail
     fields = ['title','content']
 
     def form_valid(self, form):
@@ -49,7 +49,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # Delete message
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Message
+    model = Mail
     success_url = '/'
 
     def test_func(self):

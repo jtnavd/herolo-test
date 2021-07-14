@@ -20,8 +20,21 @@ class Profile(models.Model):
             img.thumbnail(output_size)
             img.save(self.image.path)
 
+# OLD MODEL
+# class Message(models.Model):
+#     title = models.CharField(max_length=50)
+#     content = models.TextField()
+#     date_sent = models.DateTimeField(default = timezone.now)
+#     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+#     def __str__(self):
+#         return self.title
 
-class Message(models.Model):
+#     def get_absolute_url(self):
+#         return reverse("message-detail", kwargs={"pk": self.pk})
+    
+
+class Mail(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
     date_sent = models.DateTimeField(default = timezone.now)
@@ -32,5 +45,4 @@ class Message(models.Model):
 
     def get_absolute_url(self):
         return reverse("message-detail", kwargs={"pk": self.pk})
-    
 
